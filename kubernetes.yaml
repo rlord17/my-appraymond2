@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-appraymond2
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-appraymond2
+  template:
+    metadata:
+      labels:
+        app: my-appraymond2
+    spec:
+      containers:
+        - name: my-appraymond2
+          image: my-appraymond2:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: '1'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-appraymond2-balancer
+spec:
+  selector:
+    app: my-appraymond2
+  ports:
+    - protocol: TCP
+      port: 8000 # The port to expose to the outside
+      targetPort: 8080 # The port the application is running on in the pods
+  type: LoadBalancer
+  sessionAffinity: ClientIP
